@@ -9,3 +9,5 @@ robot_odom_topic: /robot/odom
 goal_topic: /goal
 object_one_pose_topic: /object_one/pose 
 object_two_pose_topic: /object_two/pose
+
+fake_mode: true

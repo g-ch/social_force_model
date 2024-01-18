@@ -29,7 +29,7 @@ bool object_two_pose_received = false;
 
 
 // Convert a double value to RGB color
-std::tuple<int, int, int> doubleToRGB(double value, double min = 0.0, double max = 10.0) {
+std::tuple<int, int, int> doubleToRGB(double value, double min = 0.0, double max = 2.0) {
     // Normalize value
     value = (value - min) / (max - min);
 
@@ -100,6 +100,8 @@ int main(int argc, char** argv)
     double visualization_range_x = yaml_file["visualization_range_x"].as<double>();
     double visualization_range_y = yaml_file["visualization_range_y"].as<double>();
 
+    std::string fake_mode = yaml_file["fake_mode"].as<std::string>();
+
     std::string robot_odom_topic = yaml_file["robot_odom_topic"].as<std::string>();
     std::string goal_topic = yaml_file["goal_topic"].as<std::string>();
     std::string object_one_pose_topic = yaml_file["object_one_pose_topic"].as<std::string>();
@@ -140,7 +142,7 @@ int main(int argc, char** argv)
 
     // Wait for robot state and goal state
     ros::Rate wait_rate(50);
-    while(ros::ok())
+    while(ros::ok() && fake_mode == "false")
     {
         ros::spinOnce();
 
@@ -148,6 +150,22 @@ int main(int argc, char** argv)
             break;
 
         wait_rate.sleep();
+    }
+
+    if(fake_mode == "true")
+    {
+        // Set the dynamic obstacle message
+        object_one_pose.pose.position.x = 1.0;
+        object_one_pose.pose.position.y = 1.0;
+
+        object_two_pose.pose.position.x = -1.0;
+        object_two_pose.pose.position.y = -2.0;
+
+        object_one_pose_received = true;
+        object_two_pose_received = true;
+
+        // Set goal
+        goal << 2.0, 3.0;
     }
 
 
@@ -193,6 +211,16 @@ int main(int argc, char** argv)
         {
             for(double y = -map_range_y; y < map_range_y; y += checking_interval)
             {   
+
+                // Set robot state
+                robot_state.clear();
+                robot_state.push_back(x); //x
+                robot_state.push_back(y); //y
+                robot_state.push_back(0.0); //theta
+                robot_state.push_back(0.0); //vx
+                robot_state.push_back(0.0); //vy
+                robot_state.push_back(0.5); //radius
+
                 // Calculate total force
                 Eigen::Vector2d goal_force, static_obstacle_force, social_force;
                 Eigen::Vector2d total_force = sfm.sfmStep(robot_state, static_obj_states, dynamic_obj_states, goal, goal_force, static_obstacle_force, social_force);
