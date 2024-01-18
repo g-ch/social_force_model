@@ -1,0 +1,11 @@
+force_factor_goal: 1.0
+force_factor_social: 1.0
+force_factor_obstacle: 1.0
+visualization_resolusion: 0.2
+visualization_range_x: 10.0
+visualization_range_y: 10.0
+
+robot_odom_topic: /robot/odom
+goal_topic: /goal
+object_one_pose_topic: /object_one/pose 
+object_two_pose_topic: /object_two/pose
