@@ -157,16 +157,16 @@ int main(int argc, char** argv)
     pcl::PointCloud<pcl::PointXYZRGB> social_force_cloud;
 
     // Wait for robot state and goal state
-    ros::Rate wait_rate(50);
-    while(ros::ok() && fake_mode == "false")
-    {
-        ros::spinOnce();
+    // ros::Rate wait_rate(50);
+    // while(ros::ok() && fake_mode == "false")
+    // {
+    //     ros::spinOnce();
 
-        if(goal_received)
-            break;
+    //     if(goal_received)
+    //         break;
 
-        wait_rate.sleep();
-    }
+    //     wait_rate.sleep();
+    // }
 
     if(fake_mode == "true")
     {
@@ -290,6 +290,9 @@ int main(int argc, char** argv)
         pub_goal_force.publish(goal_force_cloud);
         pub_static_obstacle_force.publish(static_obstacle_force_cloud);
         pub_social_force.publish(social_force_cloud);
+
+        ros::spinOnce();
+        loop_rate.sleep();
     }
 
     return 0;
