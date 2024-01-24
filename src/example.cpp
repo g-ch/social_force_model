@@ -10,6 +10,8 @@
 #include "geometry_msgs/PoseStamped.h"
 #include "nav_msgs/Odometry.h"
 
+#include "geometry_msgs/PoseWithCovarianceStamped.h"
+
 /*********
  * TODO: The static obstacle force looks weird. Check if it is correct.
  * ******/
@@ -23,7 +25,7 @@ geometry_msgs::PoseStamped object_one_pose;
 geometry_msgs::PoseStamped object_two_pose;
 
 bool goal_received = false;
-bool robot_state_received = false;
+// bool robot_state_received = false;
 bool object_one_pose_received = false;
 bool object_two_pose_received = false;
 
@@ -50,17 +52,17 @@ std::tuple<int, int, int> doubleToRGB(double value, double min = 0.0, double max
 }
 
 
-void robotOdomCallback(const nav_msgs::Odometry::ConstPtr& msg)
-{
-    robot_state.clear();
-    robot_state.push_back(msg->pose.pose.position.x); //x
-    robot_state.push_back(msg->pose.pose.position.y); //y
-    robot_state.push_back(0.0); //theta
-    robot_state.push_back(msg->twist.twist.linear.x); //vx
-    robot_state.push_back(msg->twist.twist.linear.y); //vy
-    robot_state.push_back(0.5); //radius
-    robot_state_received = true;
-}
+// void robotOdomCallback(const nav_msgs::Odometry::ConstPtr& msg)
+// {
+//     robot_state.clear();
+//     robot_state.push_back(msg->pose.pose.position.x); //x
+//     robot_state.push_back(msg->pose.pose.position.y); //y
+//     robot_state.push_back(0.0); //theta
+//     robot_state.push_back(msg->twist.twist.linear.x); //vx
+//     robot_state.push_back(msg->twist.twist.linear.y); //vy
+//     robot_state.push_back(0.5); //radius
+//     robot_state_received = true;
+// }
 
 void goalCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
@@ -69,16 +71,30 @@ void goalCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 }
 
 
-void objectOnePoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
+// void objectOnePoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
+// {
+//     object_one_pose_received = true;
+//     object_one_pose = *msg;
+// }
+
+// void objectTwoPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
+// {
+//     object_two_pose_received = true;
+//     object_two_pose = *msg;
+// }
+
+void objectOnePoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &msg)
 {
     object_one_pose_received = true;
-    object_one_pose = *msg;
+    object_one_pose.pose = msg->pose.pose;
+    object_one_pose.header = msg->header;
 }
 
-void objectTwoPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
+void objectTwoPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &msg)
 {
     object_two_pose_received = true;
-    object_two_pose = *msg;
+    object_two_pose.pose = msg->pose.pose;
+    object_two_pose.header = msg->header;
 }
 
 
@@ -115,7 +131,7 @@ int main(int argc, char** argv)
     ros::Publisher pub_static_obstacle_force = nh.advertise<pcl::PointCloud<pcl::PointXYZRGB>>("social_force_model/static_obstacle_force", 1);
     ros::Publisher pub_social_force = nh.advertise<pcl::PointCloud<pcl::PointXYZRGB>>("social_force_model/social_force", 1);
 
-    ros::Subscriber robot_odom_sub = nh.subscribe(robot_odom_topic, 1, robotOdomCallback);
+    // ros::Subscriber robot_odom_sub = nh.subscribe(robot_odom_topic, 1, robotOdomCallback);
     ros::Subscriber goal_sub = nh.subscribe(goal_topic, 1, goalCallback);
     ros::Subscriber object_one_pose_sub = nh.subscribe(object_one_pose_topic, 1, objectOnePoseCallback);
     ros::Subscriber object_two_pose_sub = nh.subscribe(object_two_pose_topic, 1, objectTwoPoseCallback);
@@ -146,7 +162,7 @@ int main(int argc, char** argv)
     {
         ros::spinOnce();
 
-        if(robot_state_received && goal_received)
+        if(goal_received)
             break;
 
         wait_rate.sleep();
