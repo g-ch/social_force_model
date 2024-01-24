@@ -60,7 +60,7 @@ public:
         /****** Goal force ******/
         goal_force = goalForce(robot_position, robot_velocity, goal, pref_speed);
         goal_force *= force_factor_desired;
-        std::cout << "goal_force: " << goal_force.transpose() << std::endl;
+        //std::cout << "goal_force: " << goal_force.transpose() << std::endl;
 
         /***** Static obstacle force ******/
         static_obstacle_force = Eigen::Vector2d::Zero();
@@ -85,7 +85,7 @@ public:
             static_obstacle_force += obstacle_force;
         }
 
-        std::cout << "static_obstacle_force: " << static_obstacle_force.transpose() << std::endl;
+        //std::cout << "static_obstacle_force: " << static_obstacle_force.transpose() << std::endl;
 
         /****** Social force ******/
         social_force = Eigen::Vector2d::Zero();
@@ -114,10 +114,10 @@ public:
             social_force += ped_force;
         }
 
-        std::cout << "social_force: " << social_force.transpose() << std::endl;
+        //std::cout << "social_force: " << social_force.transpose() << std::endl;
 
         Eigen::Vector2d total_force = goal_force + static_obstacle_force + social_force;
-        std::cout << "total_force: " << total_force.transpose() << std::endl;
+        //std::cout << "total_force: " << total_force.transpose() << std::endl;
 
         return total_force;
     }

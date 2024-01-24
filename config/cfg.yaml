@@ -6,8 +6,8 @@ visualization_range_x: 10.0
 visualization_range_y: 10.0
 
 robot_odom_topic: /robot/odom
-goal_topic: /goal
-object_one_pose_topic: /object_one/pose 
-object_two_pose_topic: /object_two/pose
+goal_topic: /move_base_simple/goal
+object_one_pose_topic: /vicon/obstacle1
+object_two_pose_topic: /vicon/obstacle2
 
-fake_mode: true
+fake_mode: false

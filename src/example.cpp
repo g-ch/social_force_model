@@ -103,7 +103,7 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "social_force_model_node");
 
     // Get Yaml file path
-    std::string yaml_file_path = "/home/clarence/ros_ws/dingo_ws/src/social_force_model/config/cfg.yaml";
+    std::string yaml_file_path = "/home/saray/dingo_ws/src/social_force_model/config/cfg.yaml";
 
     // Read Yaml file
     YAML::Node yaml_file = YAML::LoadFile(yaml_file_path);
